@@ -1,0 +1,30 @@
+services:
+  database:
+    image: mariadb:10.5.12
+    container_name: laravel_db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    ports:
+        - "${DB_PORT}:3306"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+
+  app:
+    build:
+      dockerfile: Dockerfile
+      context: .docker/app
+    container_name: laravel_app
+    restart: always
+    volumes:
+      - ./:/app
+    working_dir: /app
+    command: composer run dev
+    ports:
+      - "5173:5173"
+      - "8000:8000"
+
+volumes:
+  mariadb_data:
